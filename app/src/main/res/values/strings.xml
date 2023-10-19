@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">kotlin_IMDB</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="imdb">IMDB</string>
+    <string name="log_in">Log in</string>
+    <string name="input_name">Input your name...</string>
+    <string name="greeting_string">Hello, %1$s!</string>
 </resources>
