@@ -10,7 +10,6 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginBtn: Button
     private lateinit var nameInput: EditText
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -24,6 +23,5 @@ class LoginActivity : AppCompatActivity() {
 
         }
     }
-
 
 }

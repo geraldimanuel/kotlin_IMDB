@@ -1,61 +1,83 @@
 package com.example.kotlin_imdb
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
+import com.example.kotlin_imdb.api.MovieApiService
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MovieList.newInstance] factory method to
- * create an instance of this fragment.
- */
+lateinit var movieAdapter: MovieAdapter
 class MovieList : Fragment() {
 
-    private val retrofit by lazy{
-        Retrofit.Builder()
-            .baseUrl("https://api.themoviedb.org/3/")
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
+    private val TAG: String = "Fragment Movie List"
+
+
+    override fun onStart() {
+        super.onStart()
+        setupRecyclerView()
+        getDataFromApi()
     }
 
-    private val MovieApiService by lazy{
-        retrofit.create(com.example.kotlin_imdb.api.MovieApiService::class.java)
-    }
+    private fun setupRecyclerView(){
+        movieAdapter = MovieAdapter(arrayListOf(), object : MovieAdapter.OnAdapterListener {
+            override fun onClick(movie: MainModel.Movie) {
+                startActivity(
+                    Intent(context,DetailActivity::class.java)
+                        .putExtra("title", movie.title)
+                        .putExtra("backdrop", movie.backdrop_path)
+                        .putExtra("overview", movie.overview)
+                        .putExtra("popularity", movie.popularity)
+                        .putExtra("release_date", movie.release_date)
+                        .putExtra("vote_average", movie.vote_average)
+                )
 
-   private val apiResponseView by lazy{
-        view?.findViewById<TextView>(R.id.api_response)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        getMovieResponse()
-    }
-
-    private fun getMovieResponse(){
-
-        val call = MovieApiService.getPopularMovies("05c628b1143996bd5dbea98f4ab4e7a3")
-
-        call.enqueue(object: retrofit2.Callback<String>{
-            override fun onResponse(call: retrofit2.Call<String>, response: retrofit2.Response<String>) {
-                apiResponseView?.text = response.body()
-            }
-
-            override fun onFailure(call: retrofit2.Call<String>, t: Throwable) {
-                apiResponseView?.text = t.message
             }
 
         })
+        val recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_view)
+        recyclerView?.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = movieAdapter
+        }
+
+    }
+
+    private fun getDataFromApi(){
+        MovieApiService.endpoint.getPopularMovies("05c628b1143996bd5dbea98f4ab4e7a3")
+            .enqueue(object: Callback<MainModel> {
+                override fun onResponse(call: Call<MainModel>, response: Response<MainModel>) {
+                    if(response.isSuccessful){
+                        showData(response.body()!!)
+                    }
+                }
+
+                override fun onFailure(call: Call<MainModel>, t: Throwable) {
+                    printLog(t.toString())
+                }
+
+            })
+    }
+
+    private fun showData(data:MainModel){
+        val results = data.results
+        movieAdapter.setData(results)
+    }
+
+    private fun printLog(message:String){
+        Log.d(TAG, message)
     }
 
     override fun onCreateView(
