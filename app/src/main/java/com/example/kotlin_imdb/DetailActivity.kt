@@ -6,8 +6,11 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import com.bumptech.glide.Glide
+import org.w3c.dom.Text
 
 class DetailActivity : AppCompatActivity() {
+
+    private lateinit var backButton: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -26,7 +29,6 @@ class DetailActivity : AppCompatActivity() {
         val release_date = intent.getStringExtra("release_date")
         val vote_average = intent.getDoubleExtra("vote_average", 0.0)
 
-        // TODO: 1. Set the value of the text view with the id "overview" to the value of the variable overview
         val overview_text = findViewById<TextView>(R.id.detail_overview)
         val popularity_text = findViewById<TextView>(R.id.detail_popularity)
         val date_text = findViewById<TextView>(R.id.detail_date)
@@ -39,12 +41,15 @@ class DetailActivity : AppCompatActivity() {
         vote_text.text = "Vote average: ${vote_average.toString()}"
         title_text.text = title
 
-
-
         Glide.with(this)
             .load("https://image.tmdb.org/t/p/w500${backdrop}")
             .centerCrop()
             .into(findViewById(R.id.backdrop))
+
+        backButton = findViewById(R.id.back_btn)
+        backButton.setOnClickListener {
+            finish()
+        }
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {

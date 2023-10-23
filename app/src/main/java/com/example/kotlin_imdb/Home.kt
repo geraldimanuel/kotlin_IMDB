@@ -20,6 +20,7 @@ class Home : AppCompatActivity() {
 
     private val TAG: String = "Home"
     private lateinit var textGreeting: TextView
+    private lateinit var logoutTextView: TextView
 
     lateinit var movieAdapter: MovieAdapter
 
@@ -43,45 +44,23 @@ class Home : AppCompatActivity() {
         viewPager.adapter = fragmentAdapter
         tabLayout.setupWithViewPager(viewPager)
 
+        // pass name to profile fragment
+        val bundle = Bundle()
+        bundle.putString("name", name)
+        val profileFragment = ProfileFragment()
+        profileFragment.arguments = bundle
+
+        logoutTextView = findViewById(R.id.logout)
+
+        logoutTextView.setOnClickListener() {
+            logout()
+        }
     }
 
-//    override fun onStart() {
-//        super.onStart()
-//        setupRecyclerView()
-//        getDataFromApi()
-//    }
-//    private fun setupRecyclerView(){
-//        movieAdapter = MovieAdapter(arrayListOf())
-//        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
-//        recyclerView.apply {
-//            layoutManager = LinearLayoutManager(context)
-//            adapter = movieAdapter
-//        }
-//
-//    }
-//    private fun getDataFromApi(){
-//        MovieApiService.endpoint.getPopularMovies("05c628b1143996bd5dbea98f4ab4e7a3")
-//            .enqueue(object: Callback<MainModel>{
-//                override fun onResponse(call: Call<MainModel>, response: Response<MainModel>) {
-//                    if(response.isSuccessful){
-//                        val result = response.body()
-//                        showData(response.body()!!)
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<MainModel>, t: Throwable) {
-//                    printLog(t.toString())
-//                }
-//
-//            })
-//    }
+    private fun logout() {
+        finish()
+    }
 
-//    private fun printLog(message:String){
-//        Log.d(TAG, message)
-//    }
-//
-//    private fun showData(data:MainModel){
-//        val results = data.results
-//        movieAdapter.setData(results)
-//    }
+
+
 }
