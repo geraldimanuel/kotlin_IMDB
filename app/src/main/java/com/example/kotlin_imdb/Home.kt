@@ -2,18 +2,13 @@ package com.example.kotlin_imdb
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.widget.AdapterView
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.widget.ViewPager2
-import com.example.kotlin_imdb.api.MovieApiService
 import com.google.android.material.tabs.TabLayout
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
 class Home : AppCompatActivity() {
@@ -28,10 +23,7 @@ class Home : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        // greetings handler
-        textGreeting = findViewById(R.id.greeting)
-        val name = intent.getStringExtra("name")
-        textGreeting.text = getString(R.string.greeting_string, name)
+        setSupportActionBar(findViewById(R.id.toolbar))
 
         // fragments handler
         val viewPager: ViewPager = findViewById<ViewPager>(R.id.viewPager)
@@ -44,20 +36,33 @@ class Home : AppCompatActivity() {
         viewPager.adapter = fragmentAdapter
         tabLayout.setupWithViewPager(viewPager)
 
-        // pass name to profile fragment
-        val bundle = Bundle()
-        bundle.putString("name", name)
-        val profileFragment = ProfileFragment()
-        profileFragment.arguments = bundle
+    }
 
-        logoutTextView = findViewById(R.id.logout)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu, menu)
 
-        logoutTextView.setOnClickListener() {
-            logout()
+        val name = intent.getStringExtra("name")
+
+        val greetingMenuItem = menu.findItem(R.id.greeting_menu)
+        greetingMenuItem.title = getString(R.string.greeting_string, name)
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.logout_menu -> {
+                logout()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
     private fun logout() {
+        // finish home activity
         finish()
     }
 
